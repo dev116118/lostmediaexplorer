@@ -1,146 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Lost Media Search Engine</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-  body {
-    margin: 0;
-    background: #1e1e1e;
-    color: #eee;
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  header {
-    background: #b22222;
-    padding: 1rem 2rem;
-    text-align: center;
-    font-weight: 600;
-    font-size: 1.8rem;
-    letter-spacing: 1.2px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.7);
-  }
-  main {
-    flex-grow: 1;
-    padding: 1rem 2rem;
-    max-width: 900px;
-    margin: 0 auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  form {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-    align-items: center;
-    justify-content: center;
-  }
-  input[type="text"], select {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    background: #333;
-    color: #eee;
-    transition: background 0.3s ease;
-    min-width: 180px;
-  }
-  input[type="text"]:focus, select:focus {
-    outline: none;
-    background: #4b0000;
-  }
-  button {
-    background: #b22222;
-    color: #eee;
-    border: none;
-    padding: 0.6rem 1.5rem;
-    font-weight: 600;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #8a1717;
-  }
-  .results {
-    display: grid;
-    gap: 1rem;
-    flex-grow: 1;
-  }
-  .result-item {
-    background: #2a2a2a;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(178,34,34,0.5);
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    transition: background 0.3s ease;
-  }
-  .result-item:hover {
-    background: #3d0a0a;
-  }
-  .result-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #f7b2b2;
-    text-decoration: none;
-  }
-  .result-title:hover {
-    text-decoration: underline;
-  }
-  .result-snippet {
-    font-size: 0.9rem;
-    color: #ccc;
-    flex-grow: 1;
-  }
-  .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 1rem 0 0 0;
-    flex-wrap: wrap;
-  }
-  footer {
-    text-align: center;
-    padding: 1rem 0;
-    font-size: 0.8rem;
-    color: #777;
-    border-top: 1px solid #333;
-    margin-top: auto;
-  }
-  @media (max-width: 600px) {
-    form {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lost Media Search Engine</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    :root {
+      --primary: #b22222;
+      --primary-dark: #8a1717;
+      --bg: #1e1e1e;
+      --text: #f5f5f5;
+      --card-bg: #2c2c2c;
+      --card-hover: #3e0e0e;
+      --accent: #f7b2b2;
+      --gray: #999;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
       flex-direction: column;
-      gap: 0.7rem;
+      min-height: 100vh;
     }
-    button {
+    .result-item small {
+        color: #888;
+        font-size: 0.85rem;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        }
+
+    header {
+      background: var(--primary);
+      padding: 1rem;
+      text-align: center;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem 1rem;
+      max-width: 900px;
       width: 100%;
-      padding: 0.8rem 0;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
-  }
-</style>
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background: #333;
+      color: var(--text);
+    }
+
+    input:focus,
+    select:focus {
+      background: #4a0000;
+      outline: none;
+    }
+
+    button {
+      background: var(--primary);
+      color: var(--text);
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      padding: 0.8rem;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .result-item {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: background 0.3s ease;
+      box-shadow: 0 0 6px rgba(178, 34, 34, 0.4);
+    }
+
+    .result-item:hover {
+      background: var(--card-hover);
+    }
+
+    .result-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .result-title:hover {
+      text-decoration: underline;
+    }
+
+    .result-snippet {
+        font-size: 0.95rem;
+        color: #ccc;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #777;
+      padding: 1rem;
+      border-top: 1px solid #333;
+    }
+
+    @media (min-width: 600px) {
+      form {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+
+      input[type="text"],
+      select {
+        flex: 1;
+        min-width: 180px;
+      }
+
+      button {
+        flex-shrink: 0;
+        padding: 0.75rem 1.5rem;
+      }
+    }
+  </style>
 </head>
 <body>
 <header>Lost Media Search Engine</header>
 <main>
-  <form id="searchForm" aria-label="Search form">
-    <input type="text" id="queryInput" placeholder="Search lost media..." value="lost media" required aria-label="Search query" />
-    <select id="sourceSelect" aria-label="Select search source">
+  <form id="searchForm">
+    <input type="text" id="queryInput" placeholder="Search lost media..." value="lost media" required />
+    <select id="sourceSelect">
       <option value="archive" selected>Lostmedia search</option>
       <option value="ahmia">Darkweb search</option>
     </select>
     <button type="submit">Search</button>
   </form>
-  <div id="results" class="results" aria-live="polite" aria-atomic="true"></div>
-  <div class="pagination" aria-label="Pagination controls">
+
+  <div id="results" class="results"></div>
+
+  <div class="pagination">
     <button id="prevBtn" disabled>Previous</button>
     <button id="nextBtn">Next</button>
   </div>
@@ -154,22 +202,18 @@
   const nextBtn = document.getElementById('nextBtn');
   const queryInput = document.getElementById('queryInput');
   const sourceSelect = document.getElementById('sourceSelect');
-  const paginationDiv = document.querySelector('.pagination');
 
   let currentPage = 1;
 
-  // Show or hide pagination buttons based on source
   function updatePaginationVisibility(source) {
-    if (source === 'archive') {
-      paginationDiv.style.display = 'flex';
-    } else {
-      paginationDiv.style.display = 'none';
-    }
+    document.querySelector('.pagination').style.display =
+      source === 'archive' ? 'flex' : 'none';
   }
 
   async function fetchResults(query, page = 1, source = 'archive') {
-    resultsDiv.innerHTML = `<p>Loading results...</p>`;
+    resultsDiv.innerHTML = `<p>Loading...</p>`;
     updatePaginationVisibility(source);
+
     try {
       const url = `/api/media?q=${encodeURIComponent(query)}&page=${page}&source=${encodeURIComponent(source)}`;
       const resp = await fetch(url);
@@ -177,14 +221,10 @@
       const data = await resp.json();
       renderResults(data.results);
       currentPage = data.page || 1;
-
-      // Only enable pagination for archive source
-      if (source === 'archive') {
-        prevBtn.disabled = currentPage <= 1;
-        nextBtn.disabled = data.results.length === 0;
-      }
-    } catch (e) {
-      resultsDiv.innerHTML = `<p>Search error: ${e.message}</p>`;
+      prevBtn.disabled = currentPage <= 1;
+      nextBtn.disabled = data.results.length === 0;
+    } catch (err) {
+      resultsDiv.innerHTML = `<p>Error: ${err.message}</p>`;
       prevBtn.disabled = true;
       nextBtn.disabled = true;
     }
@@ -197,30 +237,26 @@
     }
     resultsDiv.innerHTML = '';
     results.forEach(item => {
-      console.log('Result link:', item.link);
-
       const div = document.createElement('div');
       div.className = 'result-item';
 
-      const a = document.createElement('a');
-      a.href = item.link || item.url || '#';
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.className = 'result-title';
-      a.textContent = item.title;
-
-      const urlDisplay = document.createElement('small');
-      urlDisplay.style.color = '#999';
-      urlDisplay.textContent = item.link || item.url || '';
+      const title = document.createElement('a');
+      title.className = 'result-title';
+      title.href = item.link || '#';
+      title.target = '_blank';
+      title.textContent = item.title;
 
       const snippet = document.createElement('p');
       snippet.className = 'result-snippet';
       snippet.textContent = item.snippet || '';
 
-      div.appendChild(a);
-      div.appendChild(urlDisplay);
-      div.appendChild(snippet);
+      const linkDisplay = document.createElement('small');
+      linkDisplay.style.color = '#888';
+      linkDisplay.textContent = item.link || '';
 
+      div.appendChild(title);
+      div.appendChild(linkDisplay);
+      div.appendChild(snippet);
       resultsDiv.appendChild(div);
     });
   }
@@ -241,12 +277,6 @@
   nextBtn.addEventListener('click', () => {
     currentPage++;
     fetchResults(queryInput.value.trim(), currentPage, sourceSelect.value);
-  });
-
-  // On source change, reset page and fetch results, also update pagination visibility
-  sourceSelect.addEventListener('change', () => {
-    currentPage = 1;
-    updatePaginationVisibility(sourceSelect.value);
   });
 
   window.addEventListener('load', () => {
