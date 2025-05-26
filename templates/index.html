@@ -172,15 +172,24 @@
         padding: 0.75rem 1.5rem;
       }
     }
+    .result-item img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
   </style>
 </head>
 <body>
-<header>Lost Media Search Engine</header>
+<header>Lost Media Explorer</header>
 <main>
   <form id="searchForm">
     <input type="text" id="queryInput" placeholder="Search lost media..." value="lost media" required />
     <select id="sourceSelect">
       <option value="archive" selected>Lostmedia search</option>
+      <option value="openverse">Image search</option>
       <option value="ahmia">Darkweb search</option>
     </select>
     <button type="submit">Search</button>
@@ -206,9 +215,13 @@
   let currentPage = 1;
 
   function updatePaginationVisibility(source) {
-    document.querySelector('.pagination').style.display =
-      source === 'archive' ? 'flex' : 'none';
-  }
+  const paginatedSources = ['archive', 'openverse'];
+  document.querySelector('.pagination').style.display =
+    paginatedSources.includes(source) ? 'flex' : 'none';
+}
+
+
+
 
   async function fetchResults(query, page = 1, source = 'archive') {
     resultsDiv.innerHTML = `<p>Loading...</p>`;
@@ -219,7 +232,7 @@
       const resp = await fetch(url);
       if (!resp.ok) throw new Error("Search failed");
       const data = await resp.json();
-      renderResults(data.results);
+      renderResults(data.results, sourceSelect.value);
       currentPage = data.page || 1;
       prevBtn.disabled = currentPage <= 1;
       nextBtn.disabled = data.results.length === 0;
@@ -230,16 +243,39 @@
     }
   }
 
-  function renderResults(results) {
-    if (!results.length) {
-      resultsDiv.innerHTML = `<p>No results found.</p>`;
-      return;
-    }
-    resultsDiv.innerHTML = '';
-    results.forEach(item => {
-      const div = document.createElement('div');
-      div.className = 'result-item';
+  function renderResults(results, source) {
+  if (!results.length) {
+    resultsDiv.innerHTML = `<p>No results found.</p>`;
+    return;
+  }
+  resultsDiv.innerHTML = '';
 
+  results.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'result-item';
+
+    if (source === 'openverse') {
+      // Render image result
+      const img = document.createElement('img');
+      img.src = item.url;
+      img.alt = item.title;
+      img.style.width = '100%';  // or any size you want
+      img.style.borderRadius = '8px';
+
+      const title = document.createElement('a');
+      title.className = 'result-title';
+      title.href = item.link;
+      title.target = '_blank';
+      title.textContent = item.title;
+
+      const creator = document.createElement('small');
+      creator.textContent = `By: ${item.snippet}`;
+
+      div.appendChild(img);
+      div.appendChild(title);
+      div.appendChild(creator);
+    } else {
+      // Old text-based rendering for other sources
       const title = document.createElement('a');
       title.className = 'result-title';
       title.href = item.link || '#';
@@ -257,9 +293,12 @@
       div.appendChild(title);
       div.appendChild(linkDisplay);
       div.appendChild(snippet);
-      resultsDiv.appendChild(div);
-    });
-  }
+    }
+
+    resultsDiv.appendChild(div);
+  });
+}
+
 
   form.addEventListener('submit', e => {
     e.preventDefault();
