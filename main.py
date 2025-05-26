@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urlparse, parse_qs, quote
 app = Flask(__name__)
 def archive_search(query="lost media", page=1, per_page=10):
     url = "https://archive.org/advancedsearch.php"
@@ -24,7 +25,6 @@ def archive_search(query="lost media", page=1, per_page=10):
             "link": f"https://archive.org/details/{doc.get('identifier', '')}"
         })
     return results
-from urllib.parse import urlparse, parse_qs
 def ahmia_search(query="lost media"):
     headers = {
         "User-Agent": (
@@ -73,8 +73,31 @@ def ahmia_search(query="lost media"):
             "link": onion_link
         })
     return results
-def wikimedia_commons_search(query="lost media", page=1, per_page=10):
-    return []
+def openverse_search(query="lost media", page=1, per_page=10):
+    url = "https://api.openverse.engineering/v1/images"
+    params = {
+        "q": query,
+        "page": page,
+        "page_size": per_page,
+        "license_type": "all",
+        "extension": "jpg"  
+    }
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        results_json = response.json().get("results", [])
+    except requests.RequestException as e:
+        print(f"Error fetching Openverse: {e}")
+        return []
+    results = []
+    for item in results_json:
+        results.append({
+            "title": item.get("title", "Untitled"),
+            "url": item.get("url", ""),
+            "snippet": item.get("creator", "Unknown creator"),
+            "link": item.get("url", "")
+        })
+    return results
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -86,10 +109,10 @@ def media_api():
     query = request.args.get('q', 'lost media')
     if source == 'archive':
         results = archive_search(query=query, page=page, per_page=per_page)
-    elif source == 'wikimedia':
-        results = wikimedia_commons_search(query=query, page=page, per_page=per_page)
     elif source == 'ahmia':
         results = ahmia_search(query=query)
+    elif source == 'openverse':
+        results = openverse_search(query=query, page=page, per_page=per_page)
     else:
         return jsonify({"error": "Unsupported source"}), 400
     return jsonify({
