@@ -25,7 +25,7 @@ def archive_search(query="lost media", page=1, per_page=10):
             "link": f"https://archive.org/details/{doc.get('identifier', '')}"
         })
     return results
-def ahmia_search(query="lost media"):
+def ahmia_search(query="lost media", page=1):
     headers = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -33,44 +33,25 @@ def ahmia_search(query="lost media"):
             "Chrome/114.0.0.0 Safari/537.36"
         )
     }
-    url = f"https://ahmia.fi/search/?q={query}"
+    url = f"https://onionland.io/scrape.php?page={page}&q={query.replace(' ', '+')}"
     try:
         response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
     except requests.RequestException as e:
-        print(f"Error fetching Ahmia: {e}")
+        print(f"Error fetching OnionLand: {e}")
         return []
     soup = BeautifulSoup(response.text, "html.parser")
     results = []
-    for li in soup.select("li.result"):
-        h4 = li.find("h4")
-        if not h4:
-            continue
-        a = h4.find("a", href=True)
-        if not a:
-            continue
-        href = a['href']
-        onion_link = None
-        if "ahmia.fi/redirect" in href or href.startswith('/search/redirect'):
-            full_redirect_url = href
-            if href.startswith('/'):
-                full_redirect_url = "https://ahmia.fi" + href
-            parsed = urlparse(full_redirect_url)
-            query_params = parse_qs(parsed.query)
-            if "redirect_url" in query_params:
-                onion_link = query_params["redirect_url"][0]
-        elif ".onion" in href:
-            onion_link = href
-        if not onion_link or ".onion" not in onion_link:
-            continue
+    for a in soup.select("a.onionRecord[href]"):
+        href = a["href"]
         title = a.get_text(strip=True)
-        p = li.find("p")
-        description = p.get_text(strip=True) if p else ""
+        if not href or ".onion" not in href:
+            continue
         results.append({
             "title": title,
-            "url": onion_link,
-            "snippet": description,
-            "link": onion_link
+            "url": href,
+            "snippet": "",  
+            "link": href
         })
     return results
 def openverse_search(query="lost media", page=1, per_page=10):
@@ -110,7 +91,7 @@ def media_api():
     if source == 'archive':
         results = archive_search(query=query, page=page, per_page=per_page)
     elif source == 'ahmia':
-        results = ahmia_search(query=query)
+        results = ahmia_search(query=query, page=page)
     elif source == 'openverse':
         results = openverse_search(query=query, page=page, per_page=per_page)
     else:
